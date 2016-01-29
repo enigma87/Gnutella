@@ -1,0 +1,88 @@
+<!--#include file=aspcommon.inc-->
+
+
+<%
+do "devseminarcommon.pm" or die $@;
+
+use lib "/home/kkishore/p4/intranet/perllib/a****";
+
+use Cookies::HtmlCookies;
+use DevSeminar;
+use DevSeminar::Js;
+use DevSeminar::Css;
+use DevSeminar::Page;
+use a****Utils;
+
+#$session{USERNAME} = 'kkumar2';
+
+#my $namedbh = $Global::session{NAMEDBH};
+
+if ($session{USERNAME} eq '' ) {
+print "<html><head>
+<link rel=stylesheet type='text/css' href='$ENV{STATIC_HOST}/globalstyle.css'>
+</head>
+<body><center>
+<span class=Heading>devBook login</span>
+&nbsp;<br>Unknown user.
+<br>&nbsp;<br><a href='/wiki/login.esp?ID=38593'>Login page</a>";
+}
+#elsif (! SQLValues("select 1 from userprofile where windowsusername = ?", $namedbh, $session{USERNAME})){
+#	$session{USERNAME} = SQLValues("select windowsusername from userprofile where username=?", $namedbh, $session{USERNAME});
+#}
+
+if ($session{USERNAME} =~ /\w+/) {
+%>
+
+
+
+<%
+
+#$Global::session{USERNAME} = $session{USERNAME};
+
+my $dbh = DBConnect({SCHEMA => 'S**B**', INSTANCE=> 'BS1',});
+my $css = DevSeminar::Css::GetCss();
+my $js = DevSeminar::Js::GetJs($dbh);
+my $nav = DevSeminar::Page::GetNavigationDevices();
+my $loadingindicator = Cookies::HtmlCookies::AjaxMasterLoadingDiv();
+my $page = DevSeminar::Page::GetPage($dbh, {});
+
+
+
+print qq{
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+<title>devBook</title>
+<script type="text/javascript" src="$ENV{STATIC_HOST}/thirdparty/jquery.js">
+</script>
+<script type="text/javascript" src="$ENV{STATIC_HOST}/a****lib.js">
+</script>
+<script type="text/javascript">
+top.BASE_HREF = '/devseminar';
+</script>
+};
+
+print $css;
+print $js;
+print '</head>';
+print '<body>';
+print qq{<div class="APPNAME">${loadingindicator}devBook</div>};
+print $nav;
+print qq{
+	<div id="REPLACE_PAGE">
+	$page
+	</div>
+};
+
+print q{<div class="FOOTERQUOTE">
+"Every accomplishment starts with the decision to try."
+</div>
+};
+print '</br></br></br></br>';
+print '</br></br></br></br>';
+print '</br></br>';
+print '</body>';
+print '</html>'
+}
+%>
